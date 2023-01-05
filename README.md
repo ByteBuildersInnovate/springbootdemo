@@ -4,11 +4,11 @@ REST application that provides REST API.
 
 Run CustomerService locally
 
-## Databse configuration
+### Databse configuration
 
   Create database customerdemo Predefined username - root Predefined password - root
 
-## Access CustomerService using next REST requests:
+### Access CustomerService using next REST requests:
 
 GET: localhost:9966/api/v1/users/ - get all customers GET: localhost:9966/api/v1/users/3 - get customer with ID 3
 
