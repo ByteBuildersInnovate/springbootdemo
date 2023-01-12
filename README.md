@@ -6,10 +6,24 @@ Run CustomerService locally
 
 ### Access CustomerService using next REST requests:
 
-GET: localhost:9966/api/v1/users/ - get all customers GET: localhost:9966/api/v1/users/3 - get customer with ID 3
+GET: localhost:9966/api/v1/users/getUser/18
 
-POST: localhost:9966/api/v1/users/ Request body: { "firstName": "Albert", "lastName": "Pike" }
+POST: localhost:9966/api/v1/users/saveUser 
+      Request body: 
+      { 
+          "firstName": "Albert", 
+          "lastName": "Pike" 
+      }
 
-PUT: localhost:9966/api/v1/users/ Request body: { "id": 8, "firstName": "Albert", "lastName": "Wesker" }
+PUT: localhost:9966/api/v1/users/updateUser 
+      Request body: 
+      { 
+          "id": 20,
+          "firstName": "Albert", 
+          "lastName": "Pike" 
+      }
+      
+DELETE: localhost:9966/api/v1/users/deleteUser/25
 
-DELETE: localhost:9966/api/v1/users/8 - delete customer with ID 8
+GET: localhost:9966/api/v1/users/getAllUsers
+
