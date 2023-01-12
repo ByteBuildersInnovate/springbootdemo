@@ -1,17 +1,16 @@
 package ru.iflex.springbootdemo.service;
-
 import ru.iflex.springbootdemo.model.User;
-
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
+    User saveUser(String firstName, String lastName);
 
-    Optional<User> getById(Long id);
+    User updateUser(Long id, String firstName, String lastName);
 
-    void save(User user);
+    User getUserById(Long id);
 
-    void delete(Long id);
+    User deleteUserById(Long id);
 
-    List<User> getAll();
+    List<User> getAllUsers();
+
 }
