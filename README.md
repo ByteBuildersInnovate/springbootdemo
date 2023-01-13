@@ -27,3 +27,5 @@ DELETE: localhost:9966/api/v1/users/deleteUser/25
 
 GET: localhost:9966/api/v1/users/getAllUsers
 
+### Unit tests
+Unit tests for the functionality of the application in the class UserRepositoryTests.
