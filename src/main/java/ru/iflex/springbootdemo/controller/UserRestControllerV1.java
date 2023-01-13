@@ -1,87 +1,68 @@
 package ru.iflex.springbootdemo.controller;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
+import ru.iflex.springbootdemo.dto.UserDto;
 import ru.iflex.springbootdemo.model.User;
 import ru.iflex.springbootdemo.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users/")
 public class UserRestControllerV1 {
 
-    @Autowired
     private UserService userService;
+    @Autowired
+    public UserRestControllerV1(UserService userService) {
+        this.userService = userService;
+    }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Optional<User>> getUser(@PathVariable("id") Long userId) {
-        if (userId == null) {
+    @RequestMapping(value = "saveUser",method = RequestMethod.POST)
+    public ResponseEntity<User> saveUser(@RequestBody UserDto userDto){
+        User user = userService.saveUser(userDto.getFirstName(), userDto.getLastName());
+        if (user == null || user.getFirstName()==null || user.getLastName()==null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        Optional<User> user = this.userService.getById(userId);
-
-        if (!user.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<Optional<User>>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user,HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> saveUser(@RequestBody @Validated User user) {
-        HttpHeaders headers = new HttpHeaders();
-
-        if (user == null) {
-            return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        this.userService.save(user);
-        return new ResponseEntity<>(user, headers, HttpStatus.CREATED);
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.PUT,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> updateUser(@RequestBody @Validated User user, UriComponentsBuilder builder) {
-        HttpHeaders headers = new HttpHeaders();
-
-        if (user == null) {
+    @RequestMapping(value = "updateUser",method = RequestMethod.PUT)
+    public ResponseEntity<User> updateUser(@RequestBody User userDto){
+        if (userDto == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        this.userService.save(user);
-        return new ResponseEntity<>(user, headers, HttpStatus.OK);
+        this.userService.updateUser(userDto.getId(), userDto.getFirstName(), userDto.getLastName());
+        return new ResponseEntity<>(userDto,HttpStatus.OK);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> deleteUser(@PathVariable("id") Long id) {
-        Optional<User> user = this.userService.getById(id);
-
-        if (!user.isPresent()) {
+    @RequestMapping(value = "getUser/{id}", method = RequestMethod.GET)
+    public ResponseEntity<User> getUserById(@PathVariable("id") Long id){
+        User user = userService.getUserById(id);
+        if (user == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        this.userService.delete(id);
-
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(user);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = this.userService.getAll();
-
-        if (users.isEmpty()) {
+    @RequestMapping(value = "deleteUser/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<User> deleteUserById (@PathVariable("id") Long id){
+        User user = this.userService.getUserById(id);
+        if (user == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        this.userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @RequestMapping(value = "getAllUsers",method = RequestMethod.GET)
+    public ResponseEntity<List<User>> getAllUsers(){
+        List<User> users = this.userService.getAllUsers();
+        if (users.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
+
 }
