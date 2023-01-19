@@ -37,6 +37,7 @@ public class UserRestControllerV1 {
         return new ResponseEntity<>(userDto,HttpStatus.OK);
     }
 
+
     @RequestMapping(value = "getUser/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id){
         User user = userService.getUserById(id);

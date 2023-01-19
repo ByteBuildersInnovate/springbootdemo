@@ -2,9 +2,15 @@ package ru.iflex.springbootdemo.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.iflex.springbootdemo.jdbc.DBUtils;
 import ru.iflex.springbootdemo.model.User;
 import ru.iflex.springbootdemo.repository.UserRepository;
 import ru.iflex.springbootdemo.service.UserService;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -22,12 +28,35 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Override
+
+    /**
+     Реализация через JDBC
+     */
+    private static final String UPDATE_USER = "UPDATE users SET first_name = ?, last_name = ? WHERE id = ?";
     public User updateUser(Long id, String firstName, String lastName) {
-        User user = mapUser(firstName, lastName);
-        user.setId(id);
-        return userRepository.save(user);
+        List<User> updateUser = new ArrayList<>();
+
+        try (Connection connection = DBUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER)){
+
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setLong(3, id);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return (User) updateUser ;
     }
+
+
+//    @Override
+//    public User updateUser(Long id, String firstName, String lastName) {
+//        User user = mapUser(firstName, lastName);
+//        user.setId(id);
+//        return userRepository.save(user);
+//    }
 
     @Override
     public User getUserById(Long id) {
